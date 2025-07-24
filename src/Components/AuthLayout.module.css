@@ -1,0 +1,53 @@
+.authContainer {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: #0c0a09;
+    position: relative;
+    overflow: hidden;
+}
+
+/* This pseudo-element creates the main blurred surface */
+.authContainer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(100px);
+    background-image: radial-gradient(circle at 20% 20%, rgba(12, 74, 110, 0.4), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(134, 25, 143, 0.3), transparent 40%);
+}
+
+/* This pseudo-element creates the moving colored blobs */
+.authContainer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+            radial-gradient(circle at 10% 80%, rgba(37, 99, 235, 0.6), transparent 30%),
+            radial-gradient(circle at 90% 10%, rgba(217, 70, 239, 0.5), transparent 30%);
+    animation: moveBlobs 10s infinite alternate;
+    will-change: transform;
+}
+.backgroundLogo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px; /* Adjust size as needed */
+    height: auto;
+    opacity: 0.05; /* Very faint */
+    z-index: 1; /* Behind the form */
+    pointer-events: none; /* Make it unclickable */
+}
+
+/* The animation that moves the blobs */
+@keyframes moveBlobs {
+    0% {
+        transform: scale(1) translate(0, 0);
+    }
+    100% {
+        transform: scale(1.4) translate(40px, -60px);
+    }
+}

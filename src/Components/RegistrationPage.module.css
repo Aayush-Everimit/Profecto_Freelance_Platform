@@ -1,0 +1,9 @@
+.inputDark::placeholder {
+    color: #cbd5e1;
+}
+
+.form-control:focus {
+    box-shadow: none !important;
+    border-color: #0d6efd;
+}
+
