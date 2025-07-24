@@ -1,0 +1,15 @@
+
+server.port=8081
+
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/YOUR_DATABASENAME_HERE
+spring.datasource.username=YOUR_USERNAME_HERE
+spring.datasource.password=YOUR_PASSWORD_HERE
+
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+
+server.error.include-binding-errors=always
+server.error.include-message=always
