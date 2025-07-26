@@ -6,6 +6,7 @@ import RegistrationPage from './pages/RegistrationPage.jsx'
 import {createBrowserRouter,RouterProvider} from "react-router-dom";
 import LoginPage from "./pages/LoginPage.jsx";
 import PostJobsPage from "./pages/PostJobsPage.jsx";
+import JobListPage from "./pages/JobListPage.jsx";
 
 function App()
 {
@@ -25,6 +26,10 @@ function App()
         {
             path:'/postjobs',
             element: <PostJobsPage/>
+        },
+        {
+          path: '/jobList',
+          element: <JobListPage/>,
         }
     ])
   return (
