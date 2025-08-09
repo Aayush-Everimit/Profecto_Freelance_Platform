@@ -1,41 +1,38 @@
-package com.profecto.api.Controller;
+package com.profecto.api.controller;
 
 import com.profecto.api.model.Job;
 import com.profecto.api.model.JobService;
-import com.profecto.api.model.MyUsers;
-import com.profecto.api.model.MyUsersRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/jobs")
-public class JobController
-{
-    private final JobService jobService;
-    private final MyUsersRepository myUsersRepository;
+public class JobController {
 
-    public JobController(JobService jobService, MyUsersRepository myUsersRepository)
-    {
+    private final JobService jobService;
+
+    public JobController(JobService jobService) {
         this.jobService = jobService;
-        this.myUsersRepository = myUsersRepository;
     }
+
     @GetMapping
-    public List<Job> getAllJobs()
-    {
+    public List<Job> getAllJobs() {
         return jobService.findAll();
     }
-    @PostMapping
-    public ResponseEntity<Job> createJob(@RequestBody Job jobRequest)
-    {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserName = authentication.getName();
 
-        MyUsers currentUser = MyUsersRepository.findByUsername(currentUserName).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"))
+
+    @PostMapping
+    public ResponseEntity<Job> createJob(@RequestBody Job jobRequest) {
+        Job savedJob = jobService.saveJob(jobRequest);
+        return new ResponseEntity<>(savedJob, HttpStatus.CREATED);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Job> getJobById(@PathVariable Long id) {
+        Optional<Job> job = jobService.findJobById(id);
+        return job.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

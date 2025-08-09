@@ -1,14 +1,11 @@
+// File: src/main/java/com/profecto/api/controller/AuthController.java
+
 package com.profecto.api.controller;
 
-import com.profecto.api.model.LoginRequest;
 import com.profecto.api.model.MyUsers;
 import com.profecto.api.model.RegistrationRequest;
 import com.profecto.api.model.MyUserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +15,11 @@ public class AuthController {
 
     private final MyUserService myUserService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    // We no longer need AuthenticationManager here
 
-    public AuthController(MyUserService myUserService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthController(MyUserService myUserService, PasswordEncoder passwordEncoder) {
         this.myUserService = myUserService;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/signup")
@@ -36,12 +32,5 @@ public class AuthController {
         return ResponseEntity.ok("User registered successfully!");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResponseEntity.ok("Login successful!");
-    }
+    // THE LOGIN METHOD HAS BEEN REMOVED FROM THIS FILE
 }

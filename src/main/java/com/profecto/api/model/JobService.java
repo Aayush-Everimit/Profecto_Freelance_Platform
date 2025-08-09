@@ -1,8 +1,12 @@
 package com.profecto.api.model;
 
 import lombok.Setter;
-import java.util.List;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+@Service
 @Setter
 public class JobService
 {
@@ -17,5 +21,7 @@ public class JobService
     public Job saveJob(Job job) {
         return jobRepository.save(job);
     }
-
+    public Optional<Job> findJobById(long id) {
+        return jobRepository.findById(id);
+    }
 }

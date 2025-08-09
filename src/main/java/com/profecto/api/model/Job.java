@@ -14,6 +14,8 @@ public class Job
     private long id;
     @Column(nullable = false)
     private String Title;
+    @Column(nullable = false)
+    private String companyName;
     @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
@@ -24,6 +26,6 @@ public class Job
     private String location;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private MyUsers postedBy;
 }

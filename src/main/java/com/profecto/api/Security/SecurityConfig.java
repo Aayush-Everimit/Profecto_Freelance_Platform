@@ -1,8 +1,12 @@
+// File: src/main/java/com/profecto/api/security/SecurityConfig.java
+
 package com.profecto.api.Security;
 
 import com.profecto.api.model.MyUserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,9 +21,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -34,27 +37,46 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF for stateless REST APIs
                 .csrf(AbstractHttpConfigurer::disable)
-                // THIS IS THE IMPORTANT PART: Enable CORS using the bean below
-                .cors(withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // Make your registration and login endpoints public
                         .requestMatchers("/api/auth/**").permitAll()
-                        // All other requests must be authenticated
+                        .requestMatchers(HttpMethod.GET, "/api/jobs").permitAll()
                         .anyRequest().authenticated()
+                )
+                // --- THIS IS THE NEW, ROBUST LOGIN CONFIGURATION ---
+                .formLogin(form -> form
+                        .loginProcessingUrl("/api/auth/login") // Tell Spring to handle this URL
+                        .successHandler((request, response, authentication) -> {
+                            // On success, we just send a 200 OK. The frontend will then fetch user data.
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            // On failure, send a 401 Unauthorized status
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed");
+                        })
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
                 );
         return http.build();
     }
 
-    // THIS BEAN DEFINES YOUR CORS RULES
+    // ... (Your corsConfigurationSource, authenticationProvider, passwordEncoder, and authenticationManager beans remain exactly the same)
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // IMPORTANT: Update this with the URL of your React app
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
