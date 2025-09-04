@@ -1,8 +1,6 @@
 package com.profecto.api.Controller;
 
-import com.profecto.api.model.MyUsers;
-import com.profecto.api.model.MyUsersRepository;
-import com.profecto.api.model.UserDto;
+import com.profecto.api.model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,21 +22,17 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser() {
-        // Get the currently authenticated user from Spring Security's context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
-        // Find the user in the database
         MyUsers currentUser = myUsersRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        // Convert the user entity to a safe DTO
         UserDto userDto = new UserDto();
         userDto.setId(currentUser.getId());
         userDto.setUsername(currentUser.getUsername());
         userDto.setEmail(currentUser.getEmail());
 
-        // Return the DTO
         return ResponseEntity.ok(userDto);
     }
 }

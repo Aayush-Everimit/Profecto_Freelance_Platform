@@ -11,17 +11,22 @@ import java.util.Optional;
 public class JobService
 {
     private final JobRepository jobRepository;
-    public JobService(JobRepository jobRepository) {
+    public JobService(JobRepository jobRepository)
+    {
         this.jobRepository = jobRepository;
     }
 
-    public List<Job> findAll() {
+    public List<Job> findAll()
+    {
         return jobRepository.findAll();
     }
-    public Job saveJob(Job job) {
+    public Job saveJob(Job job)
+    {
         return jobRepository.save(job);
     }
-    public Optional<Job> findJobById(long id) {
+    public Optional<Job> findJobById(long id)
+    {
         return jobRepository.findById(id);
     }
+
 }

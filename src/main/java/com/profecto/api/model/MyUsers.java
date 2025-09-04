@@ -1,17 +1,15 @@
 package com.profecto.api.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+import java.util.List;
+
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class MyUsers {
 
     @Id
@@ -21,9 +19,14 @@ public class MyUsers {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
     private String password;
+
+    private String email;
+
+    // Add any other user-specific fields (e.g. roles, enabled, etc.)
+
+    // Bidirectional relationship (optional)
+    @OneToMany(mappedBy = "postedBy")
+    private List<Job> jobsPosted;
 }
