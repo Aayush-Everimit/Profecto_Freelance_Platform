@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useNavigate } from "react-router-dom";
 
-export default function PostJobsPage() {
+export default function PostJobsPage({ onJobPosted }) {
     const navigate = useNavigate(); // Hook to redirect the user after success
 
 
@@ -59,12 +59,14 @@ export default function PostJobsPage() {
             });
 
             if (response.status === 201) {
+                const newJob = await response.json();
                 alert('Job posted successfully!');
-                if (onJobPosted) {
-                    onJobPosted(newJob); // Notify parent to update job list
-                }
-                navigate('/'); // Redirect to the job list page
 
+                if (onJobPosted) {
+                    onJobPosted(newJob);
+                }
+
+                navigate('/jobList');
             } else {
                 const errorText = await response.text();
                 alert(`Failed to post job: ${errorText}`);

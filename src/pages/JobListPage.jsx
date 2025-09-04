@@ -17,7 +17,7 @@ export default function JobListPage() {
             console.error("Failed to fetch jobs:", error);
         }
     };
-    
+
     useEffect(() => {
         console.log("Jobs updated, length:", jobs.length);
         console.log("Jobs data:", jobs);
