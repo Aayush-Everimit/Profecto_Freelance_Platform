@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react'; // 1. Import useContext
 import styles from '../Components/LandingPage.module.css';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Cards from "./Cards.jsx";
@@ -13,19 +13,20 @@ import boy1 from '../assets/boy1.png';
 import boy2 from '../assets/boy2.png';
 import boy3 from '../assets/boy3.png';
 import girl3 from '../assets/girl3.png';
-import LoginPage from '../pages/LoginPage.jsx';
-import RegisterPage from '../pages/RegistrationPage.jsx';
+import { AuthContext } from '../context/AuthContext.jsx'; // 2. Import your AuthContext
 
 export default function LandingPage() {
+    // 3. Get the authentication state from the context
+    const { isAuthenticated, user, logout } = useContext(AuthContext);
+
     return (
         <>
             <div className={styles.landingContainer}>
-
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">
+                        <Link className="navbar-brand" to="/">
                             <img src={BrandName} alt="Profecto" width="80" height="24" />
-                        </a>
+                        </Link>
                         <button
                             className="navbar-toggler"
                             type="button"
@@ -40,48 +41,42 @@ export default function LandingPage() {
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item">
-                                    <a className="nav-link active" aria-current="page" href="#">Home</a>
+                                    <Link className="nav-link active" aria-current="page" to="/">Home</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="/jobList">All-Jobs</Link>
+                                    <Link className="nav-link" to="/jobList">All Jobs</Link>
                                 </li>
-                                <li className="nav-item dropdown">
-                                    <a
-                                        className="nav-link dropdown-toggle"
-                                        href="#"
-                                        id="navbarDropdown"
-                                        role="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        Profile
-                                    </a>
-                                    <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><Link className="dropdown-item" to="/login">Login</Link></li>
-                                        <li><Link className="dropdown-item" to="/register">Register</Link></li>
-                                        <li><Link className="dropdown-item" to="/postjobs">PostJobs</Link></li>
-                                        <li><hr className="dropdown-divider" /></li>
-                                        <li><a className="dropdown-item" href="#">Something else here</a></li>
-                                    </ul>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link disabled" aria-disabled="true">Application History</a>
-                                </li>
+
+                                {isAuthenticated && (
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/postjobs">Post Job</Link>
+                                    </li>
+                                )}
                             </ul>
-                            <form className="d-flex" role="search">
-                                <input
-                                    className="form-control me-2"
-                                    type="search"
-                                    placeholder="Search"
-                                    aria-label="Search"
-                                />
-                                <button className="btn btn-outline-success" type="submit">Search</button>
-                            </form>
+
+                            {/* --- 4. DYNAMIC AUTH SECTION --- */}
+                            <div className="d-flex align-items-center">
+                                {isAuthenticated ? (
+                                    // If user IS logged in
+                                    <>
+                                        <span className="navbar-text me-3">
+                                            Welcome, {user ? user.username : ''}!
+                                        </span>
+                                        <button onClick={logout} className="btn btn-outline-danger">Logout</button>
+                                    </>
+                                ) : (
+                                    // User not loggedin
+                                    <>
+                                        <Link to="/login" className="btn btn-outline-primary me-2">Login</Link>
+                                        <Link to="/register" className="btn btn-primary">Register</Link>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </nav>
 
-
+                {/* ... (The rest of your landing page content remains exactly the same) ... */}
                 <div className="bg-dark p-2 rounded mt-2">
                     <div className="input-group px-2">
                         <input
@@ -94,7 +89,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="mt-5 mb-3">
-                    <h2>Highlighted Categories <span className="badge text-bg-secondary"></span></h2>
+                    <h2>Highlighted Categories</h2>
                 </div>
 
                 <div className="d-flex flex-row gap-3 overflow-auto">
@@ -104,9 +99,8 @@ export default function LandingPage() {
                     <Cards Title="Ai-Ml" Detail="Build stunning ai bots and ML algorithms." imageURl={Aimlimage} />
                 </div>
 
-
                 <div className="mt-5 mb-3">
-                    <h2>Testimonials <span className="badge text-bg-secondary"></span></h2>
+                    <h2>Testimonials</h2>
                 </div>
 
                 <div className="d-flex flex-row gap-3 overflow-auto">

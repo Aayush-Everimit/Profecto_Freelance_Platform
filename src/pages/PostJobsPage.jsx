@@ -2,9 +2,12 @@ import { useState } from "react";
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { useNavigate } from "react-router-dom";
 
-export default function PostJobsPage()
-{
+export default function PostJobsPage() {
+    const navigate = useNavigate(); // Hook to redirect the user after success
+
+
     const [formData, setFormData] = useState({
         title: "",
         companyName: "",
@@ -16,6 +19,7 @@ export default function PostJobsPage()
         pincode: ""
     });
 
+    // Your handleChange function is also perfect
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -24,35 +28,74 @@ export default function PostJobsPage()
         }));
     };
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Submitting form data:", formData);
-        alert('Form data has been logged to the console!');
+
+
+        const jobData = {
+            title: formData.title,
+            companyName: formData.companyName,
+            description: formData.description,
+            stipend: formData.stipend,
+            jobType: formData.jobType,
+            location: '' // Start with an empty location
+        };
+
+
+        if (formData.jobType === 'On-site' || formData.jobType === 'Hybrid') {
+            jobData.location = `${formData.city}, ${formData.state} - ${formData.pincode}`;
+        }
+
+        try {
+            // 3. Send the data to backend API
+            const response = await fetch('http://localhost:8081/api/jobs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(jobData),
+            });
+
+            if (response.status === 201) {
+                alert('Job posted successfully!');
+                if (onJobPosted) {
+                    onJobPosted(newJob); // Notify parent to update job list
+                }
+                navigate('/'); // Redirect to the job list page
+
+            } else {
+                const errorText = await response.text();
+                alert(`Failed to post job: ${errorText}`);
+            }
+        } catch (error) {
+            console.error("An error occurred while posting the job:", error);
+            alert("An error occurred. Please check the console.");
+        }
     };
 
 
     return (
-
         <div className="container my-5">
-
+            {/* The onSubmit handler is now connected */}
             <form className="row g-3 p-4 bg-dark text-white rounded shadow-lg mx-auto" style={{ maxWidth: '800px' }} onSubmit={handleSubmit}>
                 <h2 className="mb-4">Post a New Internship</h2>
 
-                {/* Title */}
+                {/* All your input fields remain the same */}
                 <div className="col-md-6">
                     <label htmlFor="title" className="form-label">Job Title</label>
                     <input
                         type="text"
                         className="form-control bg-secondary text-white border-0"
                         id="title"
-                        name="title" // --- 3. Connected all inputs to state ---
+                        name="title"
                         value={formData.title}
                         onChange={handleChange}
                         required
                     />
                 </div>
 
-                {/* Company Name */}
                 <div className="col-md-6">
                     <label htmlFor="companyName" className="form-label">Company Name</label>
                     <input
@@ -66,7 +109,6 @@ export default function PostJobsPage()
                     />
                 </div>
 
-                {/* Description */}
                 <div className="col-12">
                     <label htmlFor="description" className="form-label">Job Description</label>
                     <textarea
@@ -80,7 +122,6 @@ export default function PostJobsPage()
                     ></textarea>
                 </div>
 
-                {/* Stipend */}
                 <div className="col-md-6">
                     <label htmlFor="stipend" className="form-label">Stipend (per month)</label>
                     <input
@@ -93,8 +134,6 @@ export default function PostJobsPage()
                     />
                 </div>
 
-
-                {/* Job Type Radio Buttons */}
                 <div className="col-12">
                     <label className="form-label">Job Type</label>
                     <div>
@@ -112,7 +151,6 @@ export default function PostJobsPage()
                         </div>
                     </div>
                 </div>
-
 
                 {(formData.jobType === 'On-site' || formData.jobType === 'Hybrid') && (
                     <div className="col-12">
@@ -143,7 +181,6 @@ export default function PostJobsPage()
                                     <option>Delhi</option>
                                     <option>Maharashtra</option>
                                     <option>Bengaluru</option>
-
                                 </select>
                             </div>
                             <div className="col-md-3">

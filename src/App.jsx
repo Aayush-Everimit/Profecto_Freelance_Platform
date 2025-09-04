@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import LandingPage from './pages/LandingPage.jsx'
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -7,6 +6,7 @@ import {createBrowserRouter,RouterProvider} from "react-router-dom";
 import LoginPage from "./pages/LoginPage.jsx";
 import PostJobsPage from "./pages/PostJobsPage.jsx";
 import JobListPage from "./pages/JobListPage.jsx";
+import JobDetailPage from "./pages/JobDetailPage.jsx";
 
 function App()
 {
@@ -30,7 +30,12 @@ function App()
         {
           path: '/jobList',
           element: <JobListPage/>,
+        },
+        {
+            path: '/jobs/:id', // The ':id' is a URL parameter
+            element: <JobDetailPage/>
         }
+
     ])
   return (
     <>
