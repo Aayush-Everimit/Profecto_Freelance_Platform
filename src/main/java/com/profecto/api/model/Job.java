@@ -1,5 +1,6 @@
 package com.profecto.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.profecto.api.model.MyUsers;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,6 +34,7 @@ public class Job {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
+    @JsonBackReference
     private MyUsers postedBy;
 }
 

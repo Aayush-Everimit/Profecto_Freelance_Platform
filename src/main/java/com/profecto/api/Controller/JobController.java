@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +26,12 @@ public class JobController {
 
     @GetMapping
     public List<Job> getAllJobs() {
+        List<Job> jobs = new ArrayList<>();
+        jobs = jobService.findAll();
+        for(Job job : jobs)
+        {
+            System.out.println(job);
+        }
         return jobService.findAll();
     }
 

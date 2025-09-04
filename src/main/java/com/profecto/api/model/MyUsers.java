@@ -1,5 +1,6 @@
 package com.profecto.api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,5 +29,6 @@ public class MyUsers {
 
     // Bidirectional relationship (optional)
     @OneToMany(mappedBy = "postedBy")
+    @JsonManagedReference
     private List<Job> jobsPosted;
 }
